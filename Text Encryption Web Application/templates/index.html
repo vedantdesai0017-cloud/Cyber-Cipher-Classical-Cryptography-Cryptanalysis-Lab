@@ -1,0 +1,467 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Cipher - Text Encryption, Decryption & Cryptanalysis Lab</title>
+    <meta name="description" content="An interactive, beginner-friendly cybersecurity laboratory exploring classical encryption algorithms, manual cryptanalysis, brute force cracking, and frequency analysis.">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="#" class="brand">
+                <span class="brand-icon">🛡️</span>
+                <span class="brand-text">Cyber<span class="brand-accent">Cipher</span></span>
+                <span class="badge-tag">LAB v1.0</span>
+            </a>
+            <nav class="nav-links">
+                <a href="#workspace" class="nav-link active">Workspace</a>
+                <a href="#attack-lab" class="nav-link">⚔ Attack Lab</a>
+                <a href="#learn" class="nav-link">Learn</a>
+                <a href="#comparison" class="nav-link">Classical vs Modern</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-badge">CYBERSECURITY EDUCATION SUITE</div>
+            <h1 class="hero-title">Text Encryption, Decryption &amp; Cryptanalysis Lab</h1>
+            <p class="hero-subtitle">
+                Explore classical ciphers, understand the mathematics behind cryptographic transformations, 
+                and analyze historical algorithms using brute force and frequency analysis.
+            </p>
+        </section>
+
+        <!-- Educational Security Warning Banner -->
+        <div class="security-banner">
+            <div class="banner-icon">⚠️</div>
+            <div class="banner-content">
+                <strong>Educational Project Notice:</strong>
+                Classical ciphers demonstrated in this application (Caesar, Vigenère, Playfair, Rail Fence, Beaufort, Autokey) 
+                are historical algorithms intended solely for teaching cryptography principles. They are 
+                <strong>not suitable</strong> for protecting real passwords, financial transactions, credentials, or sensitive data. 
+                Modern production systems must rely on peer-reviewed standards such as AES-GCM, RSA, and ChaCha20-Poly1305.
+            </div>
+        </div>
+
+        <!-- Section 1: Main Encryption/Decryption Workspace -->
+        <section id="workspace" class="workspace-section">
+            <div class="section-header">
+                <h2>Interactive Cipher Workspace</h2>
+                <p>Select a classical algorithm, configure your key, and observe transformations in real-time.</p>
+            </div>
+
+            <div class="workspace-grid">
+                <!-- Left: Input and Output Panels -->
+                <div class="workbench-column">
+                    <!-- Controls Bar -->
+                    <div class="controls-card">
+                        <div class="controls-row">
+                            <div class="control-group">
+                                <label for="cipher-select">Algorithm</label>
+                                <select id="cipher-select" class="custom-select">
+                                    <option value="caesar" selected>1. Caesar Cipher</option>
+                                    <option value="vigenere">2. Vigenère Cipher</option>
+                                    <option value="rail_fence">3. Rail Fence Cipher</option>
+                                    <option value="playfair">4. Playfair Cipher</option>
+                                    <option value="beaufort">5. Beaufort Cipher</option>
+                                    <option value="autokey">6. Autokey Cipher</option>
+                                </select>
+                            </div>
+
+                            <div class="control-group key-group">
+                                <label for="cipher-key" id="key-label">Key (Shift)</label>
+                                <div class="input-with-hint">
+                                    <input type="text" id="cipher-key" class="custom-input" placeholder="e.g. 3" value="3">
+                                    <span id="key-hint" class="hint-text">Numeric integer shift (e.g., 3 or -5)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="controls-footer">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="show-steps-toggle" checked>
+                                <span class="checkmark"></span>
+                                Show Transformation Steps
+                            </label>
+                            
+                            <div class="sample-actions">
+                                <button type="button" class="btn-text" id="load-sample-btn">Load Sample</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Input Card -->
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <span class="indicator in-indicator"></span> INPUT MESSAGE
+                            </div>
+                            <div class="meta-counter" id="input-counter">0 chars | 0 words</div>
+                        </div>
+                        <div class="panel-body">
+                            <textarea id="input-text" class="custom-textarea" placeholder="Enter plaintext to encrypt or ciphertext to decrypt...">HELLO CYBER CIPHER</textarea>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="button-row">
+                                <button id="encrypt-btn" class="btn btn-primary">
+                                    <span class="btn-icon">🔒</span> Encrypt
+                                </button>
+                                <button id="decrypt-btn" class="btn btn-secondary">
+                                    <span class="btn-icon">🔓</span> Decrypt
+                                </button>
+                                <button id="swap-btn" class="btn btn-ghost" title="Swap input and output text">
+                                    <span class="btn-icon">⇄</span> Swap
+                                </button>
+                                <button id="clear-workspace-btn" class="btn btn-ghost" title="Clear all textareas">
+                                    <span class="btn-icon">✕</span> Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Output Card -->
+                    <div class="panel-card output-panel">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <span class="indicator out-indicator"></span> OUTPUT RESULT
+                            </div>
+                            <div class="panel-actions">
+                                <span class="meta-counter" id="output-counter">0 chars</span>
+                                <button id="copy-btn" class="btn-copy" title="Copy result to clipboard">
+                                    <span>📋</span> Copy Result
+                                </button>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <textarea id="output-text" class="custom-textarea readonly-textarea" readonly placeholder="Transformed output will appear here..."></textarea>
+                        </div>
+                        <div class="panel-footer status-bar" id="status-bar">
+                            <span class="status-msg ready">Ready for encryption or decryption.</span>
+                        </div>
+                    </div>
+
+                    <!-- Step-by-Step Educational Breakdown (Visible when Show Steps is enabled) -->
+                    <div id="steps-card" class="panel-card steps-card">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <span class="indicator step-indicator"></span>
+                                EDUCATIONAL TRANSFORMATION BREAKDOWN
+                            </div>
+                            <span class="steps-badge" id="steps-badge">0 steps</span>
+                        </div>
+                        <div class="panel-body">
+                            <div id="steps-flow" class="transformation-flow">
+                                <div class="flow-step">INPUT</div>
+                                <div class="flow-arrow">→</div>
+                                <div class="flow-step">KEY</div>
+                                <div class="flow-arrow">→</div>
+                                <div class="flow-step">ALGORITHM</div>
+                                <div class="flow-arrow">→</div>
+                                <div class="flow-step">TRANSFORMATION</div>
+                                <div class="flow-arrow">→</div>
+                                <div class="flow-step">OUTPUT</div>
+                            </div>
+                            <div id="steps-summary" class="steps-summary-box">
+                                Run an operation to see character-by-character transformation mechanics.
+                            </div>
+                            <div id="steps-list" class="steps-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Dynamic Algorithm Information Panel -->
+                <div class="info-column">
+                    <div class="info-card sticky-card" id="info-card">
+                        <div class="info-header">
+                            <span class="info-tag" id="info-type">Monoalphabetic Substitution</span>
+                            <h3 id="info-name">Caesar Cipher</h3>
+                        </div>
+                        
+                        <div class="info-section">
+                            <h4>Historical Context</h4>
+                            <p id="info-history">Named after Julius Caesar, who used it with a shift of 3 to protect military messages around 58 BC.</p>
+                        </div>
+
+                        <div class="info-section">
+                            <h4>How It Works</h4>
+                            <p id="info-how">Each letter in the plaintext is shifted forward or backward by a fixed number of positions in the alphabet (modulo 26). Spaces and punctuation remain unchanged.</p>
+                        </div>
+
+                        <div class="info-section">
+                            <h4>Key Requirements</h4>
+                            <p id="info-key">A single integer representing the shift amount (can be positive, negative, or greater than 26).</p>
+                        </div>
+
+                        <div class="info-grid">
+                            <div class="info-sub-box strengths">
+                                <h5>Strengths</h5>
+                                <p id="info-strengths">Extremely simple to understand and implement; computationally lightweight.</p>
+                            </div>
+                            <div class="info-sub-box weaknesses">
+                                <h5>Weaknesses</h5>
+                                <p id="info-weaknesses">Extremely weak. Trivial to break via brute-force (only 25 shifts) or frequency analysis.</p>
+                            </div>
+                        </div>
+
+                        <div class="info-section example-box">
+                            <h4>Example</h4>
+                            <code id="info-example">Plaintext: "HELLO WORLD", Key: 3 -> Ciphertext: "KHOOR ZRUOG"</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Attack Lab -->
+        <section id="attack-lab" class="attack-lab-section">
+            <div class="section-header">
+                <h2>⚔ Attack Lab</h2>
+                <p>Experience hands-on cryptanalysis. Learn why classical ciphers collapsed under mathematical examination.</p>
+            </div>
+
+            <div class="attack-tabs">
+                <button class="tab-btn active" data-tab="caesar-attack">Caesar Brute Force Cracker</button>
+                <button class="tab-btn" data-tab="freq-analysis">Frequency Analysis</button>
+            </div>
+
+            <!-- Tab 1: Caesar Brute Force -->
+            <div id="caesar-attack" class="attack-tab-panel active">
+                <div class="attack-grid">
+                    <div class="attack-input-card">
+                        <h3>Caesar Ciphertext Cracker</h3>
+                        <p class="attack-desc">
+                            The Caesar cipher has a keyspace of only 26 shifts ($0$ to $25$). 
+                            By testing all 25 non-trivial shifts in parallel, an attacker can decipher the message without knowing the original key.
+                        </p>
+                        <div class="form-group">
+                            <label for="caesar-attack-input">Enter Caesar Ciphertext</label>
+                            <textarea id="caesar-attack-input" class="custom-textarea attack-textarea" placeholder="Paste Caesar ciphertext here...">KHOOR ZRUOG! WKLV LV DQ HGXFDWLRQDO FLSKHU WHVW.</textarea>
+                        </div>
+                        <button id="run-caesar-brute-btn" class="btn btn-attack">
+                            <span class="btn-icon">⚡</span> Run Brute Force Attack
+                        </button>
+                        
+                        <div class="educational-callout">
+                            <strong>Why it works:</strong>
+                            Because the keyspace size $|K| = 26$ is so tiny, an exhaustive search requires testing only 25 possibilities. 
+                            Modern ciphers like AES-256 have $2^{256}$ keys, rendering brute force computationally impossible with current physics.
+                        </div>
+                    </div>
+
+                    <div class="attack-results-card">
+                        <div class="results-header">
+                            <h3>Exhaustive Keyspace Results (25 Shifts)</h3>
+                            <span id="brute-count" class="badge-tag">Awaiting Attack</span>
+                        </div>
+                        <div id="caesar-brute-results" class="caesar-results-list">
+                            <div class="empty-state">Click "Run Brute Force Attack" to generate all 25 candidate plaintexts.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Frequency Analysis -->
+            <div id="freq-analysis" class="attack-tab-panel">
+                <div class="attack-grid">
+                    <div class="attack-input-card">
+                        <h3>Letter Frequency Analyzer</h3>
+                        <p class="attack-desc">
+                            Human languages exhibit distinct letter distribution fingerprints. In standard English, 
+                            letters like <strong>E, T, A, O, I, N</strong> occur frequently, while <strong>Z, Q, X</strong> are rare.
+                            Monoalphabetic substitution ciphers merely shift or rename these letters without altering the underlying frequency signature.
+                        </p>
+                        <div class="form-group">
+                            <label for="freq-input">Enter Text to Analyze</label>
+                            <textarea id="freq-input" class="custom-textarea attack-textarea" placeholder="Enter or paste ciphertext here...">KHOOR ZRUOG! FRPSXWHU VFLHQFH DQG FUBswrsudskb duh idvflndwlqj ilhogv ri vwxgb.</textarea>
+                        </div>
+                        <div class="button-row">
+                            <button id="run-freq-btn" class="btn btn-attack">
+                                <span class="btn-icon">📊</span> Analyze Letter Frequencies
+                            </button>
+                            <button id="load-workspace-to-freq-btn" class="btn btn-ghost">
+                                Import from Workspace Output
+                            </button>
+                        </div>
+
+                        <div class="educational-callout">
+                            <strong>Limitations to Note:</strong>
+                            Frequency analysis is a statistical technique, not a magic key. Very short texts (e.g., "HI") may not reflect standard English letter distributions. 
+                            Polyalphabetic ciphers (such as Vigenère) distribute frequencies across multiple alphabets, flattening the characteristic spikes.
+                        </div>
+                    </div>
+
+                    <div class="attack-results-card">
+                        <div class="results-header">
+                            <h3>Frequency Distribution Profile</h3>
+                            <span id="freq-total-letters" class="badge-tag">0 Letters Analyzed</span>
+                        </div>
+                        
+                        <div class="freq-view-toggles">
+                            <button class="sub-tab-btn active" id="freq-show-chart">Visual Distribution</button>
+                            <button class="sub-tab-btn" id="freq-show-table">Data Table</button>
+                        </div>
+
+                        <div id="freq-chart-container" class="freq-chart-container">
+                            <div class="empty-state">Run frequency analysis to visualize letter frequencies compared with standard English.</div>
+                        </div>
+
+                        <div id="freq-table-container" class="freq-table-container" style="display: none;">
+                            <table class="data-table" id="freq-data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Letter</th>
+                                        <th>Count</th>
+                                        <th>Observed %</th>
+                                        <th>Standard English %</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Learn Section (11 Educational Cards) -->
+        <section id="learn" class="learn-section">
+            <div class="section-header">
+                <h2>Cryptographic Knowledge Base</h2>
+                <p>Fundamental concepts every cybersecurity practitioner and student should master.</p>
+            </div>
+
+            <div class="learn-cards-grid">
+                <div class="learn-card">
+                    <div class="card-num">01</div>
+                    <h3>Plaintext</h3>
+                    <p>The original, unencrypted message in human-readable or raw format before any cryptographic transformation is applied.</p>
+                </div>
+
+                <div class="learn-card">
+                    <div class="card-num">02</div>
+                    <h3>Ciphertext</h3>
+                    <p>The scrambled, obscured output produced by an encryption algorithm. To unauthorized observers, it appears as pseudorandom or meaningless characters.</p>
+                </div>
+
+                <div class="learn-card">
+                    <div class="card-num">03</div>
+                    <h3>Encryption</h3>
+                    <p>The mathematical process of converting plaintext into ciphertext using an algorithm and a secret parameter known as a key.</p>
+                </div>
+
+                <div class="learn-card">
+                    <div class="card-num">04</div>
+                    <h3>Decryption</h3>
+                    <p>The reverse operation that converts ciphertext back into intelligible plaintext using the corresponding decryption key.</p>
+                </div>
+
+                <div class="learn-card">
+                    <div class="card-num">05</div>
+                    <h3>Cryptographic Key</h3>
+                    <p>A crucial piece of information (numeric shift, keyword, or large integer) that parameterizes the algorithm and determines the transformation outcome.</p>
+                </div>
+
+                <div class="learn-card">
+                    <div class="card-num">06</div>
+                    <h3>Substitution Cipher</h3>
+                    <p>A class of ciphers where units of plaintext (individual letters or letter pairs) are systematically replaced with other characters according to a fixed rule.</p>
+                </div>
+
+                <div class="learn-card">
+                    <div class="card-num">07</div>
+                    <h3>Transposition Cipher</h3>
+                    <p>A class of ciphers where the identities of the letters are preserved, but their positions or order are scrambled according to a geometrical or mathematical permutation.</p>
+                </div>
+
+                <div class="learn-card">
+                    <div class="card-num">08</div>
+                    <h3>Brute Force Attack</h3>
+                    <p>A cryptanalytic method involving systematically trying every possible key in the algorithm's keyspace until the correct plaintext is recovered.</p>
+                </div>
+
+                <div class="learn-card">
+                    <div class="card-num">09</div>
+                    <h3>Cryptanalysis</h3>
+                    <p>The study of analyzing information systems to study hidden aspects, identify mathematical weaknesses, and decipher ciphertext without knowing the key.</p>
+                </div>
+
+                <div class="learn-card">
+                    <div class="card-num">10</div>
+                    <h3>Classical Cryptography</h3>
+                    <p>Historical pencil-and-paper or mechanical ciphers (Caesar, Vigenère, Playfair) operating on alphabetic characters with small, easily searchable keyspaces.</p>
+                </div>
+
+                <div class="learn-card">
+                    <div class="card-num">11</div>
+                    <h3>Modern Cryptography</h3>
+                    <p>Rigorous, mathematically proven digital algorithms (AES, RSA, ECC) operating on binary bitstreams with astronomically large keyspaces designed to resist advanced supercomputers.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Classical vs Modern Cryptography Comparison -->
+        <section id="comparison" class="comparison-section">
+            <div class="section-header">
+                <h2>Classical vs. Modern Cryptography</h2>
+                <p>Understand why historical ciphers became obsolete and how modern algorithms keep digital life secure.</p>
+            </div>
+
+            <div class="comparison-container">
+                <div class="comparison-col classical-col">
+                    <div class="col-badge">HISTORICAL / EDUCATIONAL</div>
+                    <h3>Classical Ciphers</h3>
+                    <ul class="comparison-list">
+                        <li><strong>Represented by:</strong> Caesar, Vigenère, Rail Fence, Playfair, Beaufort, Autokey.</li>
+                        <li><strong>Data Unit:</strong> Characters and digraphs (A-Z alphabets).</li>
+                        <li><strong>Keyspace Size:</strong> Tiny to moderate ($26$ shifts for Caesar, words for Vigenère).</li>
+                        <li><strong>Computational Tool:</strong> Designed for paper, pencil, and physical cipher wheels.</li>
+                        <li><strong>Vulnerabilities:</strong> Frequency analysis, Kasiski examination, index of coincidence, trivial brute force.</li>
+                        <li><strong>Kerckhoffs's Principle:</strong> Frequently relied on keeping the algorithm secret (security through obscurity).</li>
+                    </ul>
+                </div>
+
+                <div class="comparison-col modern-col">
+                    <div class="col-badge modern-badge">PRODUCTION STANDARDS</div>
+                    <h3>Modern Cryptography</h3>
+                    <ul class="comparison-list">
+                        <li><strong>Represented by:</strong> AES (Rijndael), RSA, ECC (Elliptic Curves), ChaCha20.</li>
+                        <li><strong>Data Unit:</strong> Binary bits and byte arrays ($128$, $256$, $2048$, $4096$ bits).</li>
+                        <li><strong>Keyspace Size:</strong> Astronomically massive ($2^{128}$ or $2^{256}$ states, uncrackable by universe's lifespan).</li>
+                        <li><strong>Computational Tool:</strong> Silicon chips, hardware crypto accelerators, quantum-resistant lattice math.</li>
+                        <li><strong>Vulnerabilities:</strong> Side-channel attacks, implementation flaws, future quantum computers (Shor's algorithm).</li>
+                        <li><strong>Kerckhoffs's Principle:</strong> Open, published, peer-reviewed algorithms; security relies entirely on keeping the key secret.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <span class="brand-icon">🛡️</span>
+                <span>Cyber<span class="brand-accent">Cipher</span></span>
+                <p class="footer-tagline">Text Encryption, Decryption &amp; Cryptanalysis Lab</p>
+            </div>
+            <div class="footer-info">
+                <p>Designed strictly for educational and instructional demonstrations.</p>
+                <p>Built with Python 3, Flask, HTML5, CSS3 &amp; Vanilla JavaScript.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification Element -->
+    <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
+    <script src="/static/js/script.js"></script>
+</body>
+</html>
